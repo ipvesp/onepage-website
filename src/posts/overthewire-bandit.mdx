@@ -1,0 +1,192 @@
+---
+title: 'OverTheWire Bandit: İlk 7 Seviye Çözümü'
+date: '2026-06-10'
+excerpt: OverTheWire Bandit'in ilk 7 seviyesi için komutlar ve çözüm notları.
+slug: overthewire-bandit-ilk-7-seviye
+series: bandit
+tags:
+  - security
+  - linux
+  - overthewire
+---
+
+# Bandit'in ilk 7 seviyesi
+
+[OverTheWire Bandit](https://overthewire.org/wargames/bandit/), Linux komut satırını adım adım öğrenmek için hazırlanmış bir alıştırma serisidir. Bu yazı Level 0'dan Level 6'ya kadar temel komutları ve çözüm mantığını özetler.
+
+Şifreler sunucuda ara sıra değişebiliyor, o yüzden aşağıya şifre yazmıyorum. Mantık aynı: bir sonraki level'in şifresi hep bir öncekinde.
+
+Her seviyede yeni bir komut çıkarsa kısaca ne işe yaradığını da yazdım.
+
+---
+
+## Level 0 → 1
+
+Burada yapacak bir şey yok aslında. Sunucuya gir, dosyayı oku, çık.
+
+```bash
+ssh bandit0@bandit.labs.overthewire.org -p 2220
+```
+
+Şifre: `bandit0` (herkese açık bu)
+
+Girdikten sonra:
+
+```bash
+cat readme
+```
+
+Ekrana düşen şey bir sonraki level'in şifresi.
+
+**`ssh` ne?**
+Uzak bir makineye terminalden bağlanmanı sağlar. Sunucu adresi + kullanıcı adı + port yeterli. `-p 2220` portu belirtiyor çünkü Bandit varsayılan 22'yi kullanmıyor.
+
+**`cat` ne?**
+Dosyanın içini ekrana basar. Okumak için en basit yol bu. Metin dosyalarına bakarken ilk aklına gelen komut olsun.
+
+---
+
+## Level 1 → 2
+
+Level 1'e geçince ev dizininde `-` adında bir dosya var. İlk denemede `cat -` yazdım, hiçbir şey olmadı — aslında klavyeden girdi bekliyordu.
+
+Linux'ta `-` çoğu zaman "standart girdi" demek. Yani dosya değil.
+
+Çözüm:
+
+```bash
+cat ./-
+```
+
+`./` diyerek "bu klasördeki dosya" demiş oluyorsun. Tire artık dosya adı.
+
+**`./` ne?**
+"Şu an bulunduğum dizin" demek. Özellikle ismi garip dosyalarda (`-`, boşluklu isimler) shell'in kafası karışmasın diye kullanırsın.
+
+---
+
+## Level 2 → 3
+
+Bu sefer dosyanın adı: `spaces in this filename`
+
+Boşluk olunca terminal bunu üç ayrı kelime sanıyor. Tırnak lazım:
+
+```bash
+cat "spaces in this filename"
+```
+
+İstersen boşlukların önüne `\` de koyabilirsin ama tırnak daha az uğraştırıyor.
+
+**Tırnak / `\` ne zaman?**
+Dosya veya klasör adında boşluk, tire, özel karakter varsa shell'in yanlış yorumlamasını engellersin. Günlük hayatta tırnak yeter.
+
+---
+
+## Level 3 → 4
+
+İpucu `inhere` klasöründe gizli bir dosya olduğunu söylüyor.
+
+```bash
+cd inhere
+ls -la
+```
+
+Listede `.hidden` diye bir şey göreceksin. Nokta ile başlayan dosyalar normal `ls`'te görünmez.
+
+```bash
+cat .hidden
+```
+
+Bitti.
+
+**`cd` ne?**
+Klasör değiştirir. `cd inhere` = inhere klasörüne gir.
+
+**`ls -la` ne?**
+`ls` dosyaları listeler. `-l` detaylı gösterir, `-a` gizli (`.` ile başlayan) dosyaları da dahil eder. Bir klasörde ne var gerçekten görmek istediğinde `ls -la` yaz.
+
+---
+
+## Level 4 → 5
+
+`inhere` içinde tonla dosya var. Hepsine baktım, çoğu anlamsız binary gibiydi. İpucu "human-readable" diyor — yani insanın okuyabileceği tek dosyayı bul.
+
+```bash
+cd inhere
+file ./*
+```
+
+`file` her dosyanın ne tür olduğunu söylüyor. Çıktıda `ASCII text` yazanı bul, sonra:
+
+```bash
+cat ./-file07
+```
+
+Dosya adı sende farklı olabilir (`-file07` yerine başka bir şey), önemli olan `file` çıktısında ASCII yazan.
+
+**`file` ne?**
+Dosyanın tipini tahmin eder — metin mi, binary mi, resim mi. İçeriği okumadan önce "bu okunabilir mi?" diye bakmak için kullanırsın. Özellikle onlarca dosya arasında tek bir metin dosyası ararken işe yarıyor.
+
+---
+
+## Level 5 → 6
+
+Bu level biraz daha uzun. Aradığımız dosya:
+
+- 1033 byte
+- human-readable
+- çalıştırılabilir değil
+
+Önce `find` ile daraltıyorum:
+
+```bash
+find . -type f -size 1033c ! -executable
+```
+
+Sonra hangisi metin ona bakıyorum:
+
+```bash
+find . -type f -size 1033c ! -executable -exec file {} \;
+```
+
+ASCII çıkanı `cat` ile oku. Bende yol `./maybehere07/.file2` gibiydi, sende farklı olabilir — `find`'in bulduğuna güven.
+
+**`find` ne?**
+Dosya arar. Sadece isimle değil; boyut, sahip, izin, tip gibi şeylerle filtreleyebilirsin. "Bu klasörde (veya diskte) şu özellikte dosya nerede?" sorusunun cevabı.
+
+Kısaca kullandığım parçalar:
+
+- `.` → aramaya buradan başla
+- `-type f` → sadece dosya
+- `-size 1033c` → tam 1033 byte (`c` = byte)
+- `! -executable` → çalıştırılabilir olmayanlar
+- `-exec file {} \;` → bulduğunun her birinde `file` çalıştır
+
+---
+
+## Level 6 → 7
+
+Artık ev dizininde değil, tüm sistemde arıyoruz. Dosya bandit7'ye ait, bandit6 grubunda ve 33 byte.
+
+```bash
+find / -user bandit7 -group bandit6 -size 33c -type f 2>/dev/null
+```
+
+Ekran hata mesajıyla doluyordu önce. `2>/dev/null` onları susturdu.
+
+Çıkan yolu `cat` ile okudum — genelde `/var/lib/dpkg/info/bandit7.password` gibi bir yerde oluyor.
+
+**`2>/dev/null` ne?**
+Hata mesajlarını çöpe atar. `/` altında arama yapınca "buna iznin yok" diye yüzlerce satır gelir; asıl sonucu görmek için bunu ekliyorsun. Sistem geneli `find`'de neredeyse standart.
+
+---
+
+## Son söz
+
+0'dan 6'ya kadar özetlersek: `ssh` ile girdim, `cat` ile okudum, garip dosya adlarında `./` ve tırnak kullandım, gizli dosya için `ls -la`, doğru dosyayı seçmek için `file`, kalabalıkta aramak için `find`.
+
+Takılırsan `man find`, `man ls` gibi komutların kendi kılavuzuna bak — Bandit zaten bunu alışkanlık edin diye tasarlanmış.
+
+Sonraki seviyelerde de aynı yaklaşım geçerlidir: önce ipucunu okuyun, ardından uygun komutu deneyin.
+
+Hadi cici bakın kendinize byee

@@ -1,0 +1,90 @@
+@import 'highlight.js/styles/github.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900 dark:bg-[#0f0f11] dark:text-neutral-200 transition-colors duration-500;
+  }
+  ::selection {
+    @apply bg-neutral-300 dark:bg-neutral-800;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+}
+
+/* Light Theme Code Highlighting */
+.hljs {
+  background: #f6f8fa !important;
+  color: #24292e !important;
+  border-radius: 0.75rem;
+  padding: 1.25rem !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-size: 0.875rem !important;
+}
+
+/* Dark Theme Code Highlighting Overrides */
+html.dark .hljs {
+  background: rgba(15, 15, 17, 0.8) !important;
+  color: #c9d1d9 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .hljs-doctag,
+html.dark .hljs-keyword,
+html.dark .hljs-meta .hljs-keyword,
+html.dark .hljs-template-tag,
+html.dark .hljs-template-variable,
+html.dark .hljs-type,
+html.dark .hljs-variable.language_ {
+  color: #ff7b72 !important;
+}
+
+html.dark .hljs-title,
+html.dark .hljs-title.class_,
+html.dark .hljs-title.class_.inherited__,
+html.dark .hljs-title.function_ {
+  color: #d2a8ff !important;
+}
+
+html.dark .hljs-attr,
+html.dark .hljs-attribute,
+html.dark .hljs-literal,
+html.dark .hljs-meta,
+html.dark .hljs-number,
+html.dark .hljs-operator,
+html.dark .hljs-variable,
+html.dark .hljs-selector-attr,
+html.dark .hljs-selector-class,
+html.dark .hljs-selector-id {
+  color: #79c0ff !important;
+}
+
+html.dark .hljs-regexp,
+html.dark .hljs-string,
+html.dark .hljs-meta .hljs-string {
+  color: #a5d6ff !important;
+}
+
+html.dark .hljs-built_in,
+html.dark .hljs-symbol {
+  color: #ffa657 !important;
+}
+
+html.dark .hljs-comment,
+html.dark .hljs-code,
+html.dark .hljs-formula {
+  color: #8b949e !important;
+}
+
+html.dark .hljs-name,
+html.dark .hljs-quote,
+html.dark .hljs-selector-tag,
+html.dark .hljs-selector-pseudo {
+  color: #7ee787 !important;
+}

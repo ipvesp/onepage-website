@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Portfolio | Notes &amp; Insights</title>
+  <link>https://example.com/blog</link>
+  <description>A collection of thoughts, technical deep-dives, and security research by Portfolio.</description>
+  <language>tr-TR</language>
+  <atom:link href="https://example.com/rss.xml" rel="self" type="application/rss+xml" />
+  <lastBuildDate>Thu, 05 Nov 2026 19:59:04 GMT</lastBuildDate>
+  <item>
+    <title><![CDATA[OverTheWire Bandit: İlk 7 Seviye Çözümü]]></title>
+    <link>https://example.com/blog/overthewire-bandit-ilk-7-seviye</link>
+    <guid isPermaLink="true">https://example.com/blog/overthewire-bandit-ilk-7-seviye</guid>
+    <pubDate>Wed, 10 Jun 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[İlk 7 Bandit seviyesini kameranın önünde değil, offstream çözdüm — notlarım burada. OverTheWire Bandit wargame rehberi ve Linux güvenlik ipuçları.]]></description>
+    <author>Portfolio</author>
+  </item>
+</channel>
+</rss>
